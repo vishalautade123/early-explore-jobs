@@ -1,0 +1,22 @@
+[
+
+  {
+    "_comment": "Oracle Cloud HCM (Fusion Recruiting) example — used by JPMorgan Chase, Goldman Sachs, Marriott, and many other large enterprises. Just needs the full careers URL; the script resolves the site number and API domain from it automatically.",
+    "name": "JPMorgan Chase",
+    "url": "https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/jobs",
+    "ats": "oraclecloud"
+  },
+  {
+    "_comment": "Oracle Cloud on a vanity/custom domain (careers.oracle.com, not *.oraclecloud.com). api_domain is set to the backend tenant found via research (eeho.fa.us2.oraclecloud.com) -- NOT YET CONFIRMED WORKING, test it. If it still returns 0 jobs / errors, open browser DevTools -> Network tab on the careers page, find the 'recruitingCEJobRequisitions' request, and update api_domain to whatever host you see there.",
+    "name": "Oracle",
+    "url": "https://careers.oracle.com/en/sites/jobsearch/jobs",
+    "ats": "oraclecloud",
+    "api_domain": "eeho.fa.us2.oraclecloud.com"
+  },
+   {
+    "_comment": "Phenom People (CareerConnect) example. First ~10 jobs come from data embedded in the page itself (verified against real captured traffic) -- reliable. Getting beyond that uses best-effort keyword-scoped queries (see PHENOM_PAGINATION_KEYWORDS in main.py), NOT confirmed to return full coverage for every tenant. Note: Mastercard's real ATS is Workday underneath; Phenom is just the public search layer, and job links go straight to the Workday apply page.",
+    "name": "Mastercard",
+    "url": "https://careers.mastercard.com/us/en/search-results",
+    "ats": "phenom"
+  }
+]

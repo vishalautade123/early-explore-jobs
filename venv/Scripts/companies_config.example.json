@@ -1,0 +1,28 @@
+[
+  {
+    "_comment": "Greenhouse example — url is the public careers board, ats/slug are auto-detected from it, but you can set them explicitly if detection fails.",
+    "name": "ExampleCorp",
+    "url": "https://boards.greenhouse.io/examplecorp",
+    "ats": "greenhouse",
+    "slug": "examplecorp"
+  },
+  {
+    "_comment": "Lever example",
+    "name": "AnotherCoLever",
+    "url": "https://jobs.lever.co/anotherco",
+    "ats": "lever",
+    "slug": "anotherco"
+  },
+  {
+    "_comment": "Ashby example",
+    "name": "AshbyCo",
+    "url": "https://jobs.ashbyhq.com/ashbyco",
+    "ats": "ashby",
+    "slug": "ashbyco"
+  },
+  {
+    "_comment": "Unknown/custom site — will fall through to the generic fetcher, which currently returns nothing until you add site-specific parsing. Still fine to leave in the list; it'll just log a warning each run.",
+    "name": "CustomSiteCo",
+    "url": "https://www.customsiteco.com/careers"
+  }
+]

@@ -1,0 +1,96 @@
+2026-08-07 19:16:21,018 [INFO] Loaded 1 companies from config.
+2026-08-07 19:19:02,132 [INFO] Done. 356 matching jobs found this run, 356 new rows added to job_search_results.xlsx.
+2026-08-08 01:12:40,246 [INFO] Loaded 1 companies from config.
+2026-08-08 01:17:32,217 [INFO] Loaded 1 companies from config.
+2026-08-08 01:20:25,472 [INFO] Done. 0 matching jobs found this run, 0 new rows added to job_search_results.xlsx.
+2026-08-08 01:21:06,519 [INFO] Loaded 1 companies from config.
+2026-08-08 01:21:21,410 [INFO] Loaded 1 companies from config.
+2026-08-08 01:25:34,364 [INFO] Done. 21 matching jobs found this run, 21 new rows added to job_search_results.xlsx.
+2026-08-08 01:42:17,838 [INFO] Loaded 2 companies from config.
+2026-08-08 01:43:14,507 [INFO] Loaded 2 companies from config.
+2026-08-08 01:47:43,768 [INFO] Loaded 2 companies from config.
+2026-08-08 01:52:04,551 [ERROR] [Oracle] Failed to fetch (oraclecloud): Expecting value: line 1 column 1 (char 0)
+2026-08-08 01:52:05,620 [INFO] Done. 21 matching jobs found this run, 21 new rows added to job_search_results.xlsx.
+2026-08-08 02:03:26,842 [INFO] Loaded 2 companies from config.
+2026-08-08 02:08:19,197 [ERROR] [Oracle] Failed to fetch (oraclecloud): Expecting value: line 1 column 1 (char 0)
+2026-08-08 02:08:20,266 [INFO] Done. 34 matching jobs found this run, 34 new rows added to job_search_results.xlsx.
+2026-08-08 02:15:43,102 [INFO] Loaded 2 companies from config.
+2026-08-08 02:16:17,577 [INFO] Loaded 2 companies from config.
+2026-08-08 02:24:30,709 [INFO] Done. 59 matching jobs found this run, 59 new rows added to job_search_results.xlsx.
+2026-08-08 02:32:04,664 [INFO] Loaded 1 companies from config.
+2026-08-08 02:32:05,739 [INFO] [Mastercard] Phenom returned 0 jobs (refNum=MASRUS, total=unknown).
+2026-08-08 02:32:06,795 [INFO] Done. 0 matching jobs found this run, 0 new rows added to job_search_results.xlsx.
+2026-08-08 02:41:42,407 [INFO] Loaded 1 companies from config.
+2026-08-08 02:41:44,333 [INFO] [Mastercard] Phenom site reports 1116 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-08 02:41:58,841 [INFO] Done. 27 matching jobs found this run, 27 new rows added to job_search_results.xlsx.
+2026-08-08 02:43:15,923 [INFO] Loaded 3 companies from config.
+2026-08-08 02:49:15,697 [INFO] Loaded 3 companies from config.
+2026-08-08 02:55:02,017 [INFO] [Mastercard] Phenom site reports 1116 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-08 02:55:13,455 [INFO] Done. 49 matching jobs found this run, 49 new rows added to job_search_results.xlsx.
+2026-08-11 13:16:27,098 [INFO] Loaded 3 companies from config.
+2026-08-11 13:20:46,525 [INFO] [Mastercard] Phenom site reports 1104 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-11 13:20:58,933 [INFO] Done. 23 matching jobs found this run, 23 new rows added to job_search_results.xlsx.
+2026-08-11 15:26:59,542 [INFO] Loaded 11 companies from config.
+2026-08-11 15:27:43,782 [INFO] Loaded 11 companies from config.
+2026-08-11 15:32:58,099 [ERROR] [JPMorgan Chase] Failed to fetch (oraclecloud): HTTPSConnectionPool(host='jpmc.fa.oraclecloud.com', port=443): Read timed out. (read timeout=20)
+2026-08-11 15:35:27,607 [INFO] [Mastercard] Phenom site reports 1104 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-11 15:42:36,452 [ERROR] [BP] Failed to fetch (bp_algolia): 403 Client Error: Forbidden for url: https://um59dwrpa1-dsn.algolia.net/1/indexes/*/queries
+2026-08-11 16:02:47,908 [INFO] Done. 21 matching jobs found this run, 21 new rows added to job_search_results.xlsx.
+2026-08-14 13:50:28,628 [INFO] Loaded 11 companies from config.
+2026-08-14 13:52:17,992 [INFO] Loaded 11 companies from config.
+2026-08-14 13:57:39,246 [INFO] [Mastercard] Phenom site reports 1119 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-14 13:59:39,247 [ERROR] [BP] Failed to fetch (bp_algolia): 403 Client Error: Forbidden for url: https://um59dwrpa1-dsn.algolia.net/1/indexes/*/queries
+2026-08-14 14:03:32,764 [INFO] Done. 53 matching jobs found this run, 53 new rows added to job_search_results.xlsx.
+2026-08-14 15:07:50,431 [INFO] Loaded 11 companies from config.
+2026-08-14 15:10:41,530 [INFO] [JPMorgan Chase] Fetched 7402 raw job(s) before filtering.
+2026-08-14 15:11:49,134 [INFO] [JPMorgan Chase] 17 job(s) matched all filters.
+2026-08-14 15:13:07,807 [INFO] [Oracle] Fetched 2205 raw job(s) before filtering.
+2026-08-14 15:13:14,781 [INFO] [Oracle] 4 job(s) matched all filters.
+2026-08-14 15:13:17,048 [INFO] [Mastercard] Phenom site reports 1119 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-14 15:13:26,925 [INFO] [Mastercard] Fetched 144 raw job(s) before filtering.
+2026-08-14 15:13:26,927 [INFO] [Mastercard] 17 job(s) matched all filters.
+2026-08-14 15:13:29,239 [INFO] [PhonePe] Fetched 78 raw job(s) before filtering.
+2026-08-14 15:13:29,242 [INFO] [PhonePe] 1 job(s) matched all filters.
+2026-08-14 15:15:14,420 [INFO] [Amazon] Fetched 2602 raw job(s) before filtering.
+2026-08-14 15:15:14,436 [INFO] [Amazon] 3 job(s) matched all filters.
+2026-08-14 15:15:21,037 [INFO] [BP] Fetched 27 raw job(s) before filtering.
+2026-08-14 15:15:26,396 [INFO] [BP] 1 job(s) matched all filters.
+2026-08-14 15:15:30,510 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
+2026-08-14 15:15:41,399 [INFO] [Cohesity] 10 job(s) matched all filters.
+2026-08-14 15:15:43,587 [INFO] [Citi] Fetched 0 raw job(s) before filtering.
+2026-08-14 15:15:43,588 [WARNING] [Citi] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-14 15:15:43,598 [INFO] [Citi] 0 job(s) matched all filters.
+2026-08-14 15:15:49,491 [INFO] [Barclays] Fetched 0 raw job(s) before filtering.
+2026-08-14 15:15:49,492 [WARNING] [Barclays] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-14 15:15:49,492 [INFO] [Barclays] 0 job(s) matched all filters.
+2026-08-14 15:17:20,046 [INFO] [SAP] Fetched 588 raw job(s) before filtering.
+2026-08-14 15:17:21,369 [INFO] [SAP] 0 job(s) matched all filters.
+2026-08-14 15:17:54,557 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
+2026-08-14 15:17:55,880 [INFO] [Nutanix] 1 job(s) matched all filters.
+2026-08-14 15:17:56,951 [INFO] Done. 54 matching jobs found this run, 54 new rows added to job_search_results.xlsx.
+2026-08-14 15:23:15,106 [INFO] Loaded 11 companies from config.
+2026-08-14 15:26:08,065 [INFO] [JPMorgan Chase] Fetched 7402 raw job(s) before filtering.
+2026-08-14 15:27:14,954 [INFO] [JPMorgan Chase] 17 job(s) matched all filters.
+2026-08-14 15:28:28,481 [INFO] [Oracle] Fetched 2205 raw job(s) before filtering.
+2026-08-14 15:28:35,306 [INFO] [Oracle] 4 job(s) matched all filters.
+2026-08-14 15:28:39,080 [INFO] [Mastercard] Phenom site reports 1119 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-14 15:28:52,502 [INFO] [Mastercard] Fetched 146 raw job(s) before filtering.
+2026-08-14 15:28:52,505 [INFO] [Mastercard] 17 job(s) matched all filters.
+2026-08-14 15:28:54,693 [INFO] [PhonePe] Fetched 78 raw job(s) before filtering.
+2026-08-14 15:28:54,696 [INFO] [PhonePe] 1 job(s) matched all filters.
+2026-08-14 15:30:56,746 [INFO] [Amazon] Fetched 2602 raw job(s) before filtering.
+2026-08-14 15:30:56,760 [INFO] [Amazon] 3 job(s) matched all filters.
+2026-08-14 15:31:02,851 [INFO] [BP] Fetched 27 raw job(s) before filtering.
+2026-08-14 15:31:08,087 [INFO] [BP] 1 job(s) matched all filters.
+2026-08-14 15:31:13,129 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
+2026-08-14 15:31:27,029 [INFO] [Cohesity] 10 job(s) matched all filters.
+2026-08-14 15:32:49,889 [INFO] [Citi] Fetched 964 raw job(s) before filtering.
+2026-08-14 15:35:02,693 [INFO] [Citi] 34 job(s) matched all filters.
+2026-08-14 15:35:10,153 [INFO] [Barclays] Fetched 0 raw job(s) before filtering.
+2026-08-14 15:35:10,153 [WARNING] [Barclays] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-14 15:35:10,154 [INFO] [Barclays] 0 job(s) matched all filters.
+2026-08-14 15:38:13,804 [INFO] [SAP] Fetched 589 raw job(s) before filtering.
+2026-08-14 15:38:16,542 [INFO] [SAP] 0 job(s) matched all filters.
+2026-08-14 15:39:00,411 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
+2026-08-14 15:39:02,926 [INFO] [Nutanix] 1 job(s) matched all filters.
+2026-08-14 15:39:04,050 [INFO] Done. 88 matching jobs found this run, 88 new rows added to job_search_results.xlsx.

@@ -1,0 +1,69 @@
+[
+  {
+    "_comment": "Oracle Cloud HCM (Fusion Recruiting) example — used by JPMorgan Chase, Goldman Sachs, Marriott, and many other large enterprises. Just needs the full careers URL; the script resolves the site number and API domain from it automatically.",
+    "name": "JPMorgan Chase",
+    "url": "https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/jobs",
+    "ats": "oraclecloud"
+  },
+  {
+    "_comment": "Oracle Cloud on a vanity/custom domain (careers.oracle.com, not *.oraclecloud.com). api_domain is set to the backend tenant found via research (eeho.fa.us2.oraclecloud.com) -- NOT YET CONFIRMED WORKING, test it. If it still returns 0 jobs / errors, open browser DevTools -> Network tab on the careers page, find the 'recruitingCEJobRequisitions' request, and update api_domain to whatever host you see there.",
+    "name": "Oracle",
+    "url": "https://careers.oracle.com/en/sites/jobsearch/jobs",
+    "ats": "oraclecloud",
+    "api_domain": "eeho.fa.us2.oraclecloud.com"
+  },
+  {
+    "_comment": "Phenom People (CareerConnect) example. First ~10 jobs come from data embedded in the page itself (verified against real captured traffic) -- reliable. Getting beyond that uses best-effort keyword-scoped queries (see PAGINATION_KEYWORDS in main.py), NOT confirmed to return full coverage for every tenant. Note: Mastercard's real ATS is Workday underneath; Phenom is just the public search layer, and job links go straight to the Workday apply page.",
+    "name": "Mastercard",
+    "url": "https://careers.mastercard.com/us/en/search-results",
+    "ats": "phenom"
+  },
+  {
+    "_comment": "PhonePe uses Greenhouse directly -- fully supported, no caveats.",
+    "name": "PhonePe",
+    "url": "https://boards.greenhouse.io/phonepe",
+    "ats": "greenhouse"
+  },
+  {
+    "_comment": "Amazon's own in-house job search API (amazon.jobs). Clean, well-structured, full descriptions included -- verified against real captured traffic. Most reliable integration in this whole config.",
+    "name": "Amazon",
+    "url": "https://www.amazon.jobs/en/search",
+    "ats": "amazon"
+  },
+  {
+    "_comment": "BP uses Algolia search (production_bp_jobs index) -- verified against real captured traffic. Job link pattern (careers.bp.com/job-description/{job_code}) confirmed via web search. Description is only a short highlighted snippet, not the full JD -- experience-years filtering will be less reliable here.",
+    "name": "BP",
+    "url": "https://careers.bp.com/listing",
+    "ats": "bp_algolia"
+  },
+  {
+    "_comment": "Cohesity's careers page returns ALL open jobs (193 at capture time) in a single request, grouped by department -- no pagination, very efficient. Verified against real captured traffic. No posted-date or description available from this endpoint though, so date filtering can't apply (all jobs pass through) and experience filtering will show 'Unknown' for all of them. Real ATS is Workday underneath.",
+    "name": "Cohesity",
+    "url": "https://www.cohesity.com/careers/open-positions/",
+    "ats": "cohesity"
+  },
+  {
+    "_comment": "Radancy/TalentBrew platform -- verified against real captured traffic. No posted-date field available from this endpoint, so date filtering can't apply here (all jobs pass through, flagged Unknown).",
+    "name": "Citi",
+    "url": "https://jobs.citi.com/search-jobs",
+    "ats": "radancy"
+  },
+  {
+    "_comment": "Same Radancy/TalentBrew platform as Citi -- one fetcher covers both. Same posted-date limitation applies.",
+    "name": "Barclays",
+    "url": "https://search.jobs.barclays/search-jobs",
+    "ats": "radancy"
+  },
+  {
+    "_comment": "SAP SuccessFactors Career Site Builder -- verified against real captured traffic. No posted-date shown on listing rows, so date filtering can't apply here (all jobs pass through, flagged Unknown).",
+    "name": "SAP",
+    "url": "https://jobs.sap.com/search/",
+    "ats": "sap_successfactors"
+  },
+  {
+    "_comment": "Nutanix's Umbraco-based job board -- verified against real captured traffic. No posted-date shown on listing cards, so date filtering can't apply here (all jobs pass through, flagged Unknown).",
+    "name": "Nutanix",
+    "url": "https://careers.nutanix.com/en/jobs/",
+    "ats": "nutanix"
+  }
+]
