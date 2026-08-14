@@ -94,3 +94,41 @@
 2026-08-14 15:39:00,411 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
 2026-08-14 15:39:02,926 [INFO] [Nutanix] 1 job(s) matched all filters.
 2026-08-14 15:39:04,050 [INFO] Done. 88 matching jobs found this run, 88 new rows added to job_search_results.xlsx.
+2026-08-14 16:09:11,084 [INFO] Loaded 15 companies from config.
+2026-08-14 16:11:53,044 [INFO] [JPMorgan Chase] Fetched 7405 raw job(s) before filtering.
+2026-08-14 16:12:50,077 [INFO] [JPMorgan Chase] 19 job(s) matched all filters.
+2026-08-14 16:14:02,991 [INFO] [Oracle] Fetched 2205 raw job(s) before filtering.
+2026-08-14 16:14:08,214 [INFO] [Oracle] 4 job(s) matched all filters.
+2026-08-14 16:14:11,250 [INFO] [Mastercard] Phenom site reports 1119 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-14 16:14:21,480 [INFO] [Mastercard] Fetched 146 raw job(s) before filtering.
+2026-08-14 16:14:21,483 [INFO] [Mastercard] 17 job(s) matched all filters.
+2026-08-14 16:14:23,256 [INFO] [PhonePe] Fetched 77 raw job(s) before filtering.
+2026-08-14 16:14:23,257 [INFO] [PhonePe] 1 job(s) matched all filters.
+2026-08-14 16:15:57,986 [INFO] [Amazon] Fetched 2606 raw job(s) before filtering.
+2026-08-14 16:15:57,997 [INFO] [Amazon] 3 job(s) matched all filters.
+2026-08-14 16:16:03,209 [INFO] [BP] Fetched 27 raw job(s) before filtering.
+2026-08-14 16:16:07,653 [INFO] [BP] 1 job(s) matched all filters.
+2026-08-14 16:16:11,808 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
+2026-08-14 16:16:23,072 [INFO] [Cohesity] 10 job(s) matched all filters.
+2026-08-14 16:17:37,592 [INFO] [Citi] Fetched 964 raw job(s) before filtering.
+2026-08-14 16:19:15,950 [INFO] [Citi] 34 job(s) matched all filters.
+2026-08-14 16:19:18,633 [INFO] [Barclays] Fetched 0 raw job(s) before filtering.
+2026-08-14 16:19:18,634 [WARNING] [Barclays] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-14 16:19:18,634 [INFO] [Barclays] 0 job(s) matched all filters.
+2026-08-14 16:20:45,455 [INFO] [SAP] Fetched 589 raw job(s) before filtering.
+2026-08-14 16:20:46,882 [INFO] [SAP] 0 job(s) matched all filters.
+2026-08-14 16:21:12,694 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
+2026-08-14 16:21:14,125 [INFO] [Nutanix] 1 job(s) matched all filters.
+2026-08-14 16:21:16,848 [INFO] [NICE] Fetched 290 raw job(s) before filtering.
+2026-08-14 16:21:16,849 [INFO] [NICE] 0 job(s) matched all filters.
+2026-08-14 16:21:18,578 [ERROR] [DoorDash] Failed to fetch (doordash): 403 Client Error: Forbidden for url: https://careersatdoordash.com/job-search/?keyword=&location=India&spage=1
+2026-08-14 16:21:18,582 [INFO] [DoorDash] Fetched 0 raw job(s) before filtering.
+2026-08-14 16:21:18,582 [WARNING] [DoorDash] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-14 16:21:18,582 [INFO] [DoorDash] 0 job(s) matched all filters.
+2026-08-14 16:22:03,163 [INFO] [Deloitte] Fetched 150 raw job(s) before filtering.
+2026-08-14 16:22:14,008 [INFO] [Deloitte] 3 job(s) matched all filters.
+2026-08-14 16:22:20,545 [ERROR] [UBS] Failed to fetch (ubs_brassring): 500 Server Error: Internal Server Error for url: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs
+2026-08-14 16:22:20,551 [INFO] [UBS] Fetched 0 raw job(s) before filtering.
+2026-08-14 16:22:20,552 [WARNING] [UBS] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-14 16:22:20,552 [INFO] [UBS] 0 job(s) matched all filters.
+2026-08-14 16:22:21,643 [INFO] Done. 93 matching jobs found this run, 93 new rows added to job_search_results.xlsx.

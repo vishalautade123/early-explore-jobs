@@ -1,5 +1,4 @@
 [
-
   {
     "_comment": "Oracle Cloud HCM (Fusion Recruiting) example — used by JPMorgan Chase, Goldman Sachs, Marriott, and many other large enterprises. Just needs the full careers URL; the script resolves the site number and API domain from it automatically.",
     "name": "JPMorgan Chase",
@@ -13,7 +12,7 @@
     "ats": "oraclecloud",
     "api_domain": "eeho.fa.us2.oraclecloud.com"
   },
-   {
+  {
     "_comment": "Phenom People (CareerConnect) example. First ~10 jobs come from data embedded in the page itself (verified against real captured traffic) -- reliable. Getting beyond that uses best-effort keyword-scoped queries (see PAGINATION_KEYWORDS in main.py), NOT confirmed to return full coverage for every tenant. Note: Mastercard's real ATS is Workday underneath; Phenom is just the public search layer, and job links go straight to the Workday apply page.",
     "name": "Mastercard",
     "url": "https://careers.mastercard.com/us/en/search-results",
@@ -66,29 +65,5 @@
     "name": "Nutanix",
     "url": "https://careers.nutanix.com/en/jobs/",
     "ats": "nutanix"
-  },
-  {
-    "_comment": "NICE actually runs on Greenhouse under the hood (board token 'nice' found embedded in their Next.js page's RSC data) -- fully supported, no caveats, same as PhonePe.",
-    "name": "NICE",
-    "url": "https://boards.greenhouse.io/nice",
-    "ats": "greenhouse"
-  },
-  {
-    "_comment": "DoorDash's custom WordPress job board -- verified against real captured traffic. Location filtering works server-side (?location=India), so this pulls pre-filtered results directly rather than keyword-guessing. No posted-date on listing cards.",
-    "name": "DoorDash",
-    "url": "https://careersatdoordash.com/job-search/",
-    "ats": "doordash"
-  },
-  {
-    "_comment": "Deloitte USI's legacy Oracle Taleo-based portal -- verified against real captured traffic (595 total India openings at capture time). Paginated 10 at a time, capped at 150 jobs by default in main.py (fetch_deloitte) -- raise max_jobs there for deeper coverage. No posted-date field available.",
-    "name": "Deloitte",
-    "url": "https://usijobs.deloitte.com/en_US/careersUSI/SearchJobs/India",
-    "ats": "deloitte"
-  },
-  {
-    "_comment": "UBS's BrassRing (Kenexa/IBM) career site -- verified against real captured traffic, including a real posted-date field (rare among today's batch). Requires extracting a session token from the careers page on each run, which the fetcher does automatically. A single unfiltered request already returns all India openings (19 at capture time), so no pagination needed.",
-    "name": "UBS",
-    "url": "https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=25008&siteid=5012&PageType=searchResults&SearchType=linkquery&LinkID=15231",
-    "ats": "ubs_brassring"
   }
 ]
