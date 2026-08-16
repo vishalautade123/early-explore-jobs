@@ -4,7 +4,7 @@
 2026-08-15 22:32:49,173 [INFO] [PhonePe] 0 job(s) matched all filters.
 2026-08-15 22:32:49,630 [ERROR] [JPMorgan Chase] Failed to fetch (oraclecloud): 503 Server Error: Service Temporarily Unavailable for url: https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.workLocation,requisitionList.secondaryLocations&finder=findReqs;siteNumber=CX_1001,limit=200,offset=0
 2026-08-15 22:32:49,631 [INFO] [JPMorgan Chase] Fetched 0 raw job(s) before filtering.
-2026-08-15 22:32:49,631 [WARNING] [JPMorgan Chase] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 22:32:49,631 [WARNING] [JPMorgan Chase] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 22:32:49,632 [INFO] [JPMorgan Chase] 0 job(s) matched all filters.
 2026-08-15 22:32:50,079 [INFO] [Mastercard] Phenom site reports 1124 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
 2026-08-15 22:32:53,180 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
@@ -19,7 +19,7 @@
 2026-08-15 22:33:46,326 [INFO] [NICE] 0 job(s) matched all filters.
 2026-08-15 22:33:47,197 [ERROR] [DoorDash] Failed to fetch (doordash): 403 Client Error: Forbidden for url: https://careersatdoordash.com/job-search/?keyword=&location=India&spage=1
 2026-08-15 22:33:47,199 [INFO] [DoorDash] Fetched 0 raw job(s) before filtering.
-2026-08-15 22:33:47,199 [WARNING] [DoorDash] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 22:33:47,199 [WARNING] [DoorDash] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 22:33:47,200 [INFO] [DoorDash] 0 job(s) matched all filters.
 2026-08-15 22:34:00,770 [INFO] [Barclays] Fetched 599 raw job(s) before filtering.
 2026-08-15 22:34:00,773 [INFO] [Barclays] 0 job(s) matched all filters.
@@ -28,7 +28,7 @@
 2026-08-15 22:34:07,334 [INFO] [Oracle] 1 job(s) matched all filters.
 2026-08-15 22:34:11,807 [ERROR] [UBS] UBS search POST failed (500 Server Error: Internal Server Error for url: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs). This site requires an 'RFT' anti-bot header this script cannot compute (see fetch_ubs_brassring docstring) -- likely needs a real browser to solve, not a header tweak.
 2026-08-15 22:34:11,810 [INFO] [UBS] Fetched 0 raw job(s) before filtering.
-2026-08-15 22:34:11,811 [WARNING] [UBS] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 22:34:11,811 [WARNING] [UBS] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 22:34:11,811 [INFO] [UBS] 0 job(s) matched all filters.
 2026-08-15 22:34:34,215 [INFO] [Deloitte] Fetched 150 raw job(s) before filtering.
 2026-08-15 22:34:46,089 [INFO] [Deloitte] 3 job(s) matched all filters.
@@ -44,7 +44,7 @@
 2026-08-15 23:34:25,725 [INFO] [PhonePe] 0 job(s) matched all filters.
 2026-08-15 23:34:26,142 [ERROR] [JPMorgan Chase] Failed to fetch (oraclecloud): 503 Server Error: Service Temporarily Unavailable for url: https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.workLocation,requisitionList.secondaryLocations&finder=findReqs;siteNumber=CX_1001,limit=200,offset=0
 2026-08-15 23:34:26,145 [INFO] [JPMorgan Chase] Fetched 0 raw job(s) before filtering.
-2026-08-15 23:34:26,145 [WARNING] [JPMorgan Chase] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 23:34:26,145 [WARNING] [JPMorgan Chase] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 23:34:26,146 [INFO] [JPMorgan Chase] 0 job(s) matched all filters.
 2026-08-15 23:34:27,082 [INFO] [Mastercard] Phenom site reports 1124 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
 2026-08-15 23:34:28,606 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
@@ -59,14 +59,14 @@
 2026-08-15 23:34:58,502 [INFO] [NICE] 0 job(s) matched all filters.
 2026-08-15 23:34:59,192 [ERROR] [DoorDash] Failed to fetch (doordash): 403 Client Error: Forbidden for url: https://careersatdoordash.com/job-search/?keyword=&location=India&spage=1
 2026-08-15 23:34:59,193 [INFO] [DoorDash] Fetched 0 raw job(s) before filtering.
-2026-08-15 23:34:59,193 [WARNING] [DoorDash] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 23:34:59,193 [WARNING] [DoorDash] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 23:34:59,193 [INFO] [DoorDash] 0 job(s) matched all filters.
 2026-08-15 23:35:00,824 [INFO] [Citi] Fetched 970 raw job(s) before filtering.
 2026-08-15 23:35:16,147 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
 2026-08-15 23:35:19,393 [INFO] [Nutanix] 1 job(s) matched all filters.
 2026-08-15 23:35:25,161 [ERROR] [UBS] UBS search POST failed (500 Server Error: Internal Server Error for url: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs). This site requires an 'RFT' anti-bot header this script cannot compute (see fetch_ubs_brassring docstring) -- likely needs a real browser to solve, not a header tweak.
 2026-08-15 23:35:25,194 [INFO] [UBS] Fetched 0 raw job(s) before filtering.
-2026-08-15 23:35:25,207 [WARNING] [UBS] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 23:35:25,207 [WARNING] [UBS] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 23:35:25,224 [INFO] [UBS] 0 job(s) matched all filters.
 2026-08-15 23:35:29,887 [INFO] [Oracle] Fetched 2168 raw job(s) before filtering.
 2026-08-15 23:35:32,010 [INFO] [Oracle] 1 job(s) matched all filters.
@@ -85,7 +85,7 @@
 2026-08-15 23:38:59,672 [INFO] [Mastercard] Phenom site reports 1124 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
 2026-08-15 23:38:59,673 [ERROR] [JPMorgan Chase] Failed to fetch (oraclecloud): 503 Server Error: Service Temporarily Unavailable for url: https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.workLocation,requisitionList.secondaryLocations&finder=findReqs;siteNumber=CX_1001,limit=200,offset=0
 2026-08-15 23:38:59,675 [INFO] [JPMorgan Chase] Fetched 0 raw job(s) before filtering.
-2026-08-15 23:38:59,676 [WARNING] [JPMorgan Chase] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 23:38:59,676 [WARNING] [JPMorgan Chase] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 23:38:59,676 [INFO] [JPMorgan Chase] 0 job(s) matched all filters.
 2026-08-15 23:39:02,221 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
 2026-08-15 23:39:04,133 [INFO] [BP] Fetched 27 raw job(s) before filtering.
@@ -99,14 +99,14 @@
 2026-08-15 23:39:26,385 [INFO] [NICE] 0 job(s) matched all filters.
 2026-08-15 23:39:27,163 [ERROR] [DoorDash] Failed to fetch (doordash): 403 Client Error: Forbidden for url: https://careersatdoordash.com/job-search/?keyword=&location=India&spage=1
 2026-08-15 23:39:27,164 [INFO] [DoorDash] Fetched 0 raw job(s) before filtering.
-2026-08-15 23:39:27,164 [WARNING] [DoorDash] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 23:39:27,164 [WARNING] [DoorDash] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 23:39:27,164 [INFO] [DoorDash] 0 job(s) matched all filters.
 2026-08-15 23:39:34,137 [INFO] [Citi] Fetched 970 raw job(s) before filtering.
 2026-08-15 23:39:43,238 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
 2026-08-15 23:39:44,685 [INFO] [Nutanix] 1 job(s) matched all filters.
 2026-08-15 23:39:47,502 [ERROR] [UBS] UBS search POST failed (500 Server Error: Internal Server Error for url: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs). This site requires an 'RFT' anti-bot header this script cannot compute (see fetch_ubs_brassring docstring) -- likely needs a real browser to solve, not a header tweak.
 2026-08-15 23:39:47,676 [INFO] [UBS] Fetched 0 raw job(s) before filtering.
-2026-08-15 23:39:47,681 [WARNING] [UBS] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-15 23:39:47,681 [WARNING] [UBS] Zero jobs fetched ï¿½ check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
 2026-08-15 23:39:47,681 [INFO] [UBS] 0 job(s) matched all filters.
 2026-08-15 23:40:00,161 [INFO] [Oracle] Fetched 2168 raw job(s) before filtering.
 2026-08-15 23:40:01,468 [INFO] [Oracle] 1 job(s) matched all filters.
