@@ -1,4 +1,5 @@
 [
+
   {
     "_comment": "Oracle Cloud HCM (Fusion Recruiting) example — used by JPMorgan Chase, Goldman Sachs, Marriott, and many other large enterprises. Just needs the full careers URL; the script resolves the site number and API domain from it automatically.",
     "name": "JPMorgan Chase",
@@ -12,7 +13,7 @@
     "ats": "oraclecloud",
     "api_domain": "eeho.fa.us2.oraclecloud.com"
   },
-  {
+   {
     "_comment": "Phenom People (CareerConnect) example. First ~10 jobs come from data embedded in the page itself (verified against real captured traffic) -- reliable. Getting beyond that uses best-effort keyword-scoped queries (see PAGINATION_KEYWORDS in main.py), NOT confirmed to return full coverage for every tenant. Note: Mastercard's real ATS is Workday underneath; Phenom is just the public search layer, and job links go straight to the Workday apply page.",
     "name": "Mastercard",
     "url": "https://careers.mastercard.com/us/en/search-results",
@@ -89,29 +90,5 @@
     "name": "UBS",
     "url": "https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=25008&siteid=5012&PageType=searchResults&SearchType=linkquery&LinkID=15231",
     "ats": "ubs_brassring"
-  },
-  {
-    "_comment": "Oracle Cloud HCM, same platform as JPMorgan Chase -- this tenant is BNY (Bank of New York Mellon). Site number resolves to CX_3001 via the same fallback mechanism used for other non-CX-prefixed tenants -- confirmed against real captured traffic.",
-    "name": "BNY",
-    "url": "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers/jobs",
-    "ats": "oraclecloud"
-  },
-  {
-    "_comment": "Google Careers. Job data comes from an internal AF_initDataCallback block embedded in the page -- verified against real captured traffic, full descriptions included. Pagination via &page=N is UNVERIFIED beyond page 1 (only page 1 was captured) -- watch scraper.log for a note if it detects pagination isn't working.",
-    "name": "Google",
-    "url": "https://www.google.com/about/careers/applications/jobs/results/?location=India&hl=en-GB",
-    "ats": "google"
-  },
-  {
-    "_comment": "Microsoft Careers. Clean dedicated JSON search API -- verified against real captured traffic. Full descriptions fetched on-demand only for jobs that already pass the cheap filters (title/date/location), same pattern as Oracle Cloud.",
-    "name": "Microsoft",
-    "url": "https://apply.careers.microsoft.com/careers?location=India",
-    "ats": "microsoft"
-  },
-  {
-    "_comment": "Deloitte South Asia -- a DIFFERENT platform from the 'Deloitte' entry above (that one is Oracle Taleo/usijobs). This one is SAP SuccessFactors, same platform as the SAP entry itself, just a different frontend template -- reuses fetch_sap directly, confirmed working against real captured traffic (same tr.data-row/a.jobTitle-link markup).",
-    "name": "Deloitte South Asia",
-    "url": "https://southasiacareers.deloitte.com/search/",
-    "ats": "sap_successfactors"
   }
 ]

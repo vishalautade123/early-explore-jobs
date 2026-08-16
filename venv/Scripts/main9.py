@@ -622,15 +622,32 @@ def fetch_cohesity(company, careers_url):
 
 
 def fetch_radancy(company, careers_url):
-    """Radancy / TalentBrew career sites (e.g. Citi, Barclays). Verified
-    against real captured traffic for both. Returns an HTML fragment inside
-    a JSON wrapper -- parsed with BeautifulSoup. No posted-date field is
-    available from this endpoint on either verified tenant, so posted_date
-    is left None (included, flagged "Unknown" downstream) rather than
-    guessed."""
+    """Radancy / TalentBrew career sites (e.g. Citi, Barclays). Same
+    backend platform, but tenants customize the frontend template
+    differently -- verified against real captured traffic for both, and
+    they use genuinely different HTML structures:
+      - Citi:     <li class="sr-job-item"><a class="sr-job-item__link">...
+                  no posted-date field on this tenant.
+      - Barclays: <div class="list-item"><a class="job-title--link">...
+                  DOES show a posted date, but year-less ("09 Aug") --
+                  assumed to be the current year, rolled back one year if
+                  that would put it in the future.
+    Tries both selector sets per page; uses whichever matches."""
     base = f"{urlparse(careers_url).scheme}://{urlparse(careers_url).netloc}"
     results_url = f"{base}/search-jobs/results"
     headers = {**HEADERS, "X-Requested-With": "XMLHttpRequest", "Referer": careers_url}
+
+    def parse_barclays_date(text):
+        text = text.strip()
+        if not text:
+            return None
+        try:
+            dt = datetime.strptime(f"{text} {datetime.now().year}", "%d %b %Y")
+            if dt > datetime.now() + timedelta(days=3):
+                dt = dt.replace(year=dt.year - 1)
+            return dt
+        except Exception:
+            return None
 
     jobs_by_id = {}
     for kw in PAGINATION_KEYWORDS:
@@ -638,9 +655,16 @@ def fetch_radancy(company, careers_url):
         while True:
             params = {
                 "ActiveFacetID": 0, "CurrentPage": page, "RecordsPerPage": 50,
-                "Distance": 50, "RadiusUnitType": 0, "Keywords": kw, "Location": "",
-                "ShowRadius": "False", "IsPagination": "True", "SortCriteria": 5,
-                "SortDirection": 1, "SearchType": 5, "ResultsType": 0,
+                "TotalContentResults": "", "Distance": 50, "RadiusUnitType": 0,
+                "Keywords": kw, "Location": "", "ShowRadius": "False",
+                "IsPagination": "False" if page == 1 else "True",
+                "CustomFacetName": "", "FacetTerm": "", "FacetType": 0,
+                "SearchResultsModuleName": "Search Results",
+                "SearchFiltersModuleName": "Search Filters",
+                "SortCriteria": 5, "SortDirection": 1, "SearchType": 5,
+                "PostalCode": "", "ResultsType": 0,
+                "fc": "", "fl": "", "fcf": "", "afc": "", "afl": "", "afcf": "",
+                "TotalContentPages": "NaN",
             }
             r = requests.get(results_url, headers=headers, params=params, timeout=20)
             r.raise_for_status()
@@ -650,24 +674,44 @@ def fetch_radancy(company, careers_url):
                 log.warning(f"[{company}] Radancy search returned non-JSON, stopping pagination.")
                 break
             soup = BeautifulSoup(data.get("results", ""), "html.parser")
-            items = soup.select("li.sr-job-item")
-            if not items:
-                break
-            for item in items:
+
+            found_any = False
+            # Template A: Citi-style
+            for item in soup.select("li.sr-job-item"):
                 link_tag = item.select_one("a.sr-job-item__link")
                 if not link_tag:
                     continue
+                found_any = True
                 job_id = link_tag.get("data-job-id", "")
                 loc_tag = item.select_one(".sr-job-location")
                 jobs_by_id[job_id or link_tag.get("href", "")] = {
                     "title": link_tag.get_text(strip=True),
                     "link": base + link_tag.get("href", ""),
-                    "posted_date": None,  # not exposed by this endpoint
+                    "posted_date": None,  # not exposed on this template
                     "source": company,
                     "location": loc_tag.get_text(strip=True) if loc_tag else "",
                     "description": "",
-                    "_id": job_id,
                 }
+            # Template B: Barclays-style
+            for item in soup.select("div.list-item"):
+                link_tag = item.select_one("a.job-title--link")
+                if not link_tag:
+                    continue
+                found_any = True
+                job_id = link_tag.get("data-job-id", "")
+                loc_tag = item.select_one(".job-location")
+                date_tag = item.select_one(".job-date span")
+                jobs_by_id[job_id or link_tag.get("href", "")] = {
+                    "title": link_tag.get_text(strip=True),
+                    "link": base + link_tag.get("href", ""),
+                    "posted_date": parse_barclays_date(date_tag.get_text()) if date_tag else None,
+                    "source": company,
+                    "location": loc_tag.get_text(strip=True) if loc_tag else "",
+                    "description": "",
+                }
+
+            if not found_any:
+                break
             page += 1
             if page > 20:  # safety cap
                 break
@@ -714,6 +758,180 @@ def fetch_sap(company, careers_url):
                 break
             time.sleep(0.3)
     return list(jobs_by_link.values())
+
+
+def fetch_doordash(company, careers_url):
+    """DoorDash's careers site (custom WordPress theme, Cloudflare-
+    protected). Plain server-rendered HTML, and location filtering works
+    server-side via a ?location= query param -- verified against real
+    captured traffic. No posted-date on listing cards.
+
+    CAVEAT: this site sits behind Cloudflare. A prior run got a 403. The
+    extra browser-matching headers below may help with header-based bot
+    rules, but Cloudflare can also fingerprint at the TLS-handshake level,
+    which the `requests` library cannot replicate -- if 403s persist after
+    this change, that's very likely why, and would need a real browser
+    (e.g. Playwright) to reliably get past, not just better headers."""
+    parsed = urlparse(careers_url)
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    doordash_headers = {
+        **HEADERS,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1",
+    }
+    jobs_by_link = {}
+    page = 1
+    while True:
+        url = f"{base}/job-search/?keyword=&location=India&spage={page}"
+        r = requests.get(url, headers=doordash_headers, timeout=20)
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, "html.parser")
+        items = soup.select("div.job-item")
+        if not items:
+            break
+        for item in items:
+            title_tag = item.select_one(".title-container .value a")
+            loc_tag = item.select_one(".location-container .value-secondary")
+            dept_tag = item.select_one(".department-container .value-secondary")
+            if not title_tag:
+                continue
+            href = title_tag.get("href", "")
+            jobs_by_link[href] = {
+                "title": title_tag.get_text(strip=True),
+                "link": href,
+                "posted_date": None,  # not shown on listing cards
+                "source": company,
+                "location": loc_tag.get_text(strip=True) if loc_tag else "",
+                "description": dept_tag.get_text(strip=True) if dept_tag else "",
+            }
+        page += 1
+        if page > 15:  # safety cap
+            break
+        time.sleep(0.3)
+    return list(jobs_by_link.values())
+
+
+def fetch_deloitte(company, careers_url):
+    """Deloitte USI careers (legacy Oracle Taleo-based portal). Plain
+    server-rendered HTML, paginated via jobOffset= -- verified against
+    real captured traffic (595 total India openings at capture time). No
+    posted-date field available on listing cards."""
+    parsed = urlparse(careers_url)
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    jobs_by_link = {}
+    offset = 0
+    page_size = 10  # confirmed value from real captured traffic
+    max_jobs = 150  # safety cap -- raise if you want deeper coverage
+    while offset < max_jobs:
+        url = (f"{base}/en_US/careersUSI/SearchJobs/India"
+               f"?listFilterMode=1&jobSort=relevancy&jobRecordsPerPage={page_size}&jobOffset={offset}")
+        r = requests.get(url, headers=HEADERS, timeout=20)
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, "html.parser")
+        articles = soup.select("article.article--result")
+        if not articles:
+            break
+        for a in articles:
+            link_tag = a.select_one("h3 a")
+            if not link_tag:
+                continue
+            spans = a.select(".article__header__text__subtitle span")
+            location = spans[-1].get_text(strip=True) if spans else ""
+            jobs_by_link[link_tag.get("href", "")] = {
+                "title": link_tag.get_text(strip=True),
+                "link": link_tag.get("href", ""),
+                "posted_date": None,  # not shown on listing cards
+                "source": company,
+                "location": location,
+                "description": "",
+            }
+        offset += page_size
+        time.sleep(0.3)
+    return list(jobs_by_link.values())
+
+
+def fetch_ubs_brassring(company, careers_url):
+    """UBS's BrassRing (Kenexa/IBM) career site. Requires an
+    EncryptedSessionValue token embedded in the initial page load's
+    bootstrap data (HTML-entity-encoded), which must be extracted and
+    replayed in the search POST -- verified against real captured traffic.
+    A single unfiltered request already returns all India openings (19 at
+    capture time, JobsCount matched exactly), so no pagination needed.
+    Real fields (verified): jobtitle, formtext23 (location), lastupdated
+    (DD-Mon-YYYY), jobdescription, all nested inside a Questions array.
+
+    KNOWN BLOCKER (unresolved): the live request also failed with a 500,
+    separate from the EncryptedSessionValue token. The real POST requires
+    an additional 'RFT' header whose value does NOT match any static token
+    findable in the page HTML (confirmed by direct comparison against a
+    real capture) -- it looks like a client-side-computed anti-bot
+    fingerprint, not something a plain HTTP request can derive. This would
+    likely need a real browser (e.g. Playwright) to solve properly rather
+    than further guessing at a formula."""
+    parsed = urlparse(careers_url)
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    qs = dict(x.split("=") for x in parsed.query.split("&") if "=" in x)
+    partner_id = qs.get("partnerid") or qs.get("PartnerId") or "25008"
+    site_id = qs.get("siteid") or qs.get("SiteId") or "5012"
+
+    r = requests.get(careers_url, headers=HEADERS, timeout=20)
+    r.raise_for_status()
+    clean_html = r.text.replace("\\", "")
+    m = re.search(r"EncryptedSessionValue&quot;:&quot;([^&]+)&quot;", clean_html)
+    if not m:
+        log.warning(f"[{company}] Could not find EncryptedSessionValue token on the careers "
+                    f"page -- BrassRing may have changed its bootstrap format.")
+        return []
+    token = m.group(1)
+
+    body = {
+        "PartnerId": partner_id, "SiteId": site_id, "Keyword": "", "Location": "India",
+        "KeywordCustomSolrFields": "FORMTEXT2,FORMTEXT21,AutoReq,Department,JobTitle",
+        "LocationCustomSolrFields": "FORMTEXT2,FORMTEXT23,Location",
+        "TurnOffHttps": False, "Latitude": 0, "Longitude": 0,
+        "PowerSearchOptions": {"PowerSearchOption": []},
+        "encryptedsessionvalue": token,
+    }
+    headers = {
+        **HEADERS, "Content-Type": "application/json; charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest", "Referer": careers_url,
+        "Origin": base,
+    }
+    try:
+        r2 = requests.post(f"{base}/TgNewUI/Search/Ajax/MatchedJobs", headers=headers,
+                            data=json.dumps(body), timeout=20)
+        r2.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        log.error(f"[{company}] UBS search POST failed ({e}). This site requires an 'RFT' "
+                  f"anti-bot header this script cannot compute (see fetch_ubs_brassring "
+                  f"docstring) -- likely needs a real browser to solve, not a header tweak.")
+        return []
+    job_list = ((r2.json().get("Jobs") or {}).get("Job")) or []
+
+    jobs = []
+    for j in job_list:
+        answers = {q["QuestionName"]: q.get("Value", "") for q in j.get("Questions", [])}
+        posted = None
+        raw_date = answers.get("lastupdated")  # e.g. "14-Aug-2026"
+        if raw_date:
+            try:
+                posted = datetime.strptime(raw_date, "%d-%b-%Y")
+            except Exception:
+                posted = None
+        jobs.append({
+            "title": answers.get("jobtitle", ""),
+            "link": j.get("Link", ""),
+            "posted_date": posted,
+            "source": company,
+            "location": answers.get("formtext23", ""),
+            "description": strip_html(answers.get("jobdescription", "")),
+        })
+    return jobs
 
 
 def fetch_nutanix(company, careers_url):
@@ -784,6 +1002,9 @@ URL_BASED_FETCHERS = {
     "radancy": fetch_radancy,
     "sap_successfactors": fetch_sap,
     "nutanix": fetch_nutanix,
+    "doordash": fetch_doordash,
+    "deloitte": fetch_deloitte,
+    "ubs_brassring": fetch_ubs_brassring,
 }
 
 
