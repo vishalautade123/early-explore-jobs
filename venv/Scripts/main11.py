@@ -54,7 +54,7 @@ SEEN_JOBS_FILE = BASE_DIR / "seen_jobs.json"
 
 DAYS_THRESHOLD = 2
 MAX_EXPERIENCE_YEARS = 4
-MAX_WORKERS = 6  # companies fetched concurrently; raise/lower to taste
+MAX_WORKERS = 10  # companies fetched concurrently; raise/lower to taste
 
 # Transient-failure retry, mainly for unattended scheduled runs where
 # there's no one around to notice a company came back empty for a day.
