@@ -1,0 +1,147 @@
+2026-08-16 00:13:42,680 [INFO] Loaded 15 companies from config.
+2026-08-16 00:13:42,680 [INFO] Today's output folder: D:\Projects\early-explore-jobs\venv\Scripts\output\2026-08-16
+2026-08-16 00:13:43,536 [INFO] [PhonePe] Fetched 76 raw job(s) before filtering.
+2026-08-16 00:13:43,537 [INFO] [PhonePe] 0 job(s) matched all filters.
+2026-08-16 00:13:43,783 [INFO] [Mastercard] Phenom site reports 1124 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-16 00:13:44,084 [WARNING] [JPMorgan Chase] Got HTTP 503 (likely transient), retrying (1/2) in 8s...
+2026-08-16 00:13:46,930 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
+2026-08-16 00:13:48,248 [INFO] [BP] Fetched 27 raw job(s) before filtering.
+2026-08-16 00:13:48,257 [INFO] [BP] 0 job(s) matched all filters.
+2026-08-16 00:13:52,461 [INFO] [Mastercard] Fetched 146 raw job(s) before filtering.
+2026-08-16 00:13:52,462 [INFO] [Mastercard] 1 job(s) matched all filters.
+2026-08-16 00:13:53,279 [WARNING] [JPMorgan Chase] Got HTTP 503 (likely transient), retrying (2/2) in 8s...
+2026-08-16 00:13:58,007 [INFO] [Cohesity] 10 job(s) matched all filters.
+2026-08-16 00:14:02,418 [ERROR] [JPMorgan Chase] Failed to fetch (oraclecloud) after 3 attempt(s): 503 Server Error: Service Temporarily Unavailable for url: https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.workLocation,requisitionList.secondaryLocations&finder=findReqs;siteNumber=CX_1001,limit=200,offset=0
+2026-08-16 00:14:02,418 [INFO] [JPMorgan Chase] Fetched 0 raw job(s) before filtering.
+2026-08-16 00:14:02,418 [WARNING] [JPMorgan Chase] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 00:14:02,419 [INFO] [JPMorgan Chase] 0 job(s) matched all filters.
+2026-08-16 00:14:10,970 [INFO] [Barclays] Fetched 599 raw job(s) before filtering.
+2026-08-16 00:14:10,971 [INFO] [Barclays] 0 job(s) matched all filters.
+2026-08-16 00:14:12,451 [INFO] [NICE] Fetched 290 raw job(s) before filtering.
+2026-08-16 00:14:12,493 [INFO] [NICE] 0 job(s) matched all filters.
+2026-08-16 00:14:13,305 [ERROR] [DoorDash] Failed to fetch (doordash) after 3 attempt(s): 403 Client Error: Forbidden for url: https://careersatdoordash.com/job-search/?keyword=&location=India&spage=1
+2026-08-16 00:14:13,306 [INFO] [DoorDash] Fetched 0 raw job(s) before filtering.
+2026-08-16 00:14:13,306 [WARNING] [DoorDash] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 00:14:13,306 [INFO] [DoorDash] 0 job(s) matched all filters.
+2026-08-16 00:14:22,726 [INFO] [Citi] Fetched 970 raw job(s) before filtering.
+2026-08-16 00:14:27,367 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
+2026-08-16 00:14:28,712 [INFO] [Nutanix] 1 job(s) matched all filters.
+2026-08-16 00:14:32,039 [ERROR] [UBS] UBS search POST failed (500 Server Error: Internal Server Error for url: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs). This site requires an 'RFT' anti-bot header this script cannot compute (see fetch_ubs_brassring docstring) -- likely needs a real browser to solve, not a header tweak.
+2026-08-16 00:14:32,043 [INFO] [UBS] Fetched 0 raw job(s) before filtering.
+2026-08-16 00:14:32,043 [WARNING] [UBS] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 00:14:32,043 [INFO] [UBS] 0 job(s) matched all filters.
+2026-08-16 00:14:44,922 [INFO] [Oracle] Fetched 2168 raw job(s) before filtering.
+2026-08-16 00:14:44,929 [INFO] [Oracle] 0 job(s) matched all filters.
+2026-08-16 00:14:53,089 [INFO] [Deloitte] Fetched 150 raw job(s) before filtering.
+2026-08-16 00:14:58,547 [INFO] [Amazon] Fetched 2595 raw job(s) before filtering.
+2026-08-16 00:14:58,553 [INFO] [Amazon] 0 job(s) matched all filters.
+2026-08-16 00:15:03,070 [INFO] [Deloitte] 3 job(s) matched all filters.
+2026-08-16 00:15:08,042 [INFO] [Citi] 33 job(s) matched all filters.
+2026-08-16 00:15:26,507 [INFO] [SAP] Fetched 591 raw job(s) before filtering.
+2026-08-16 00:15:27,918 [INFO] [SAP] 0 job(s) matched all filters.
+2026-08-16 00:15:27,923 [INFO] Skipped 48 job(s) already seen on a previous day.
+2026-08-16 00:15:27,977 [INFO] Done. 0 new matching job(s) this run (of 48 total matched before cross-day dedup), 0 row(s) written to D:\Projects\early-explore-jobs\venv\Scripts\output\2026-08-16\job_search_results.xlsx.
+2026-08-16 00:16:06,921 [INFO] Loaded 19 companies from config.
+2026-08-16 00:16:06,921 [INFO] Today's output folder: D:\Projects\early-explore-jobs\venv\Scripts\output\2026-08-16
+2026-08-16 00:16:07,877 [INFO] [PhonePe] Fetched 76 raw job(s) before filtering.
+2026-08-16 00:16:07,878 [INFO] [PhonePe] 0 job(s) matched all filters.
+2026-08-16 00:16:08,267 [WARNING] [JPMorgan Chase] Got HTTP 503 (likely transient), retrying (1/2) in 8s...
+2026-08-16 00:16:09,114 [INFO] [Mastercard] Phenom site reports 1124 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-16 00:16:10,672 [INFO] [BP] Fetched 27 raw job(s) before filtering.
+2026-08-16 00:16:10,675 [INFO] [BP] 0 job(s) matched all filters.
+2026-08-16 00:16:10,796 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
+2026-08-16 00:16:17,948 [INFO] [Mastercard] Fetched 144 raw job(s) before filtering.
+2026-08-16 00:16:17,949 [INFO] [Mastercard] 1 job(s) matched all filters.
+2026-08-16 00:16:18,068 [WARNING] [JPMorgan Chase] Got HTTP 503 (likely transient), retrying (2/2) in 8s...
+2026-08-16 00:16:21,948 [INFO] [Cohesity] 10 job(s) matched all filters.
+2026-08-16 00:16:27,119 [ERROR] [JPMorgan Chase] Failed to fetch (oraclecloud) after 3 attempt(s): 503 Server Error: Service Temporarily Unavailable for url: https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.workLocation,requisitionList.secondaryLocations&finder=findReqs;siteNumber=CX_1001,limit=200,offset=0
+2026-08-16 00:16:27,119 [INFO] [JPMorgan Chase] Fetched 0 raw job(s) before filtering.
+2026-08-16 00:16:27,119 [WARNING] [JPMorgan Chase] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 00:16:27,120 [INFO] [JPMorgan Chase] 0 job(s) matched all filters.
+2026-08-16 00:16:35,886 [INFO] [Barclays] Fetched 599 raw job(s) before filtering.
+2026-08-16 00:16:35,888 [INFO] [Barclays] 0 job(s) matched all filters.
+2026-08-16 00:16:37,289 [INFO] [NICE] Fetched 290 raw job(s) before filtering.
+2026-08-16 00:16:37,291 [INFO] [NICE] 0 job(s) matched all filters.
+2026-08-16 00:16:38,062 [ERROR] [DoorDash] Failed to fetch (doordash) after 3 attempt(s): 403 Client Error: Forbidden for url: https://careersatdoordash.com/job-search/?keyword=&location=India&spage=1
+2026-08-16 00:16:38,063 [INFO] [DoorDash] Fetched 0 raw job(s) before filtering.
+2026-08-16 00:16:38,063 [WARNING] [DoorDash] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 00:16:38,063 [INFO] [DoorDash] 0 job(s) matched all filters.
+2026-08-16 00:16:42,687 [INFO] [Citi] Fetched 970 raw job(s) before filtering.
+2026-08-16 00:16:51,178 [INFO] [Nutanix] Fetched 210 raw job(s) before filtering.
+2026-08-16 00:16:52,546 [INFO] [Nutanix] 1 job(s) matched all filters.
+2026-08-16 00:16:55,278 [ERROR] [UBS] UBS search POST failed (500 Server Error: Internal Server Error for url: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs). This site requires an 'RFT' anti-bot header this script cannot compute (see fetch_ubs_brassring docstring) -- likely needs a real browser to solve, not a header tweak.
+2026-08-16 00:16:55,280 [INFO] [UBS] Fetched 0 raw job(s) before filtering.
+2026-08-16 00:16:55,281 [WARNING] [UBS] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 00:16:55,281 [INFO] [UBS] 0 job(s) matched all filters.
+2026-08-16 00:17:08,322 [INFO] [Oracle] Fetched 2168 raw job(s) before filtering.
+2026-08-16 00:17:08,329 [INFO] [Oracle] 0 job(s) matched all filters.
+2026-08-16 00:17:13,545 [INFO] [Google] Page 1 returned identical results to the previous page -- &page= pagination isn't supported here, stopping.
+2026-08-16 00:17:13,548 [INFO] [Google] Fetched 20 raw job(s) before filtering.
+2026-08-16 00:17:13,548 [INFO] [Google] 1 job(s) matched all filters.
+2026-08-16 00:17:17,519 [INFO] [Deloitte] Fetched 150 raw job(s) before filtering.
+2026-08-16 00:17:20,470 [INFO] [Amazon] Fetched 2595 raw job(s) before filtering.
+2026-08-16 00:17:20,475 [INFO] [Amazon] 0 job(s) matched all filters.
+2026-08-16 00:17:20,862 [ERROR] [Microsoft] Failed to fetch (microsoft) after 3 attempt(s): 429 Client Error: TOO MANY REQUESTS for url: https://apply.careers.microsoft.com/api/pcsx/search?domain=microsoft.com&query=&location=India&start=30&sort_by=distance&filter_include_remote=1
+2026-08-16 00:17:20,862 [INFO] [Microsoft] Fetched 0 raw job(s) before filtering.
+2026-08-16 00:17:20,863 [WARNING] [Microsoft] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 00:17:20,863 [INFO] [Microsoft] 0 job(s) matched all filters.
+2026-08-16 00:17:21,459 [INFO] [BNY] Fetched 1430 raw job(s) before filtering.
+2026-08-16 00:17:21,464 [INFO] [BNY] 0 job(s) matched all filters.
+2026-08-16 00:17:27,058 [INFO] [Citi] 33 job(s) matched all filters.
+2026-08-16 00:17:27,195 [INFO] [Deloitte] 3 job(s) matched all filters.
+2026-08-16 00:17:41,248 [INFO] [SAP] Fetched 591 raw job(s) before filtering.
+2026-08-16 00:17:42,450 [INFO] [SAP] 0 job(s) matched all filters.
+2026-08-16 00:18:18,564 [INFO] [Deloitte South Asia] Fetched 845 raw job(s) before filtering.
+2026-08-16 00:19:08,696 [INFO] [Deloitte South Asia] 53 job(s) matched all filters.
+2026-08-16 00:19:08,701 [INFO] Skipped 48 job(s) already seen on a previous day.
+2026-08-16 00:19:08,801 [INFO] Done. 54 new matching job(s) this run (of 102 total matched before cross-day dedup), 54 row(s) written to D:\Projects\early-explore-jobs\venv\Scripts\output\2026-08-16\job_search_results.xlsx.
+2026-08-16 14:44:04,684 [INFO] Loaded 19 companies from config.
+2026-08-16 14:44:04,684 [INFO] Today's output folder: D:\Projects\early-explore-jobs\venv\Scripts\output\2026-08-16
+2026-08-16 14:44:05,771 [INFO] [PhonePe] Fetched 76 raw job(s) before filtering.
+2026-08-16 14:44:05,772 [INFO] [PhonePe] 0 job(s) matched all filters.
+2026-08-16 14:44:06,427 [INFO] [Mastercard] Phenom site reports 1121 total openings company-wide; pulling a best-effort keyword-scoped sample, not the full set.
+2026-08-16 14:44:08,655 [INFO] [Cohesity] Fetched 190 raw job(s) before filtering.
+2026-08-16 14:44:10,287 [INFO] [BP] Fetched 27 raw job(s) before filtering.
+2026-08-16 14:44:10,287 [INFO] [BP] 0 job(s) matched all filters.
+2026-08-16 14:44:15,479 [INFO] [Mastercard] Fetched 146 raw job(s) before filtering.
+2026-08-16 14:44:15,480 [INFO] [Mastercard] 1 job(s) matched all filters.
+2026-08-16 14:44:20,119 [INFO] [Cohesity] 10 job(s) matched all filters.
+2026-08-16 14:44:57,119 [INFO] [Barclays] Fetched 595 raw job(s) before filtering.
+2026-08-16 14:44:57,121 [INFO] [Barclays] 0 job(s) matched all filters.
+2026-08-16 14:45:06,015 [INFO] [Oracle] Fetched 2160 raw job(s) before filtering.
+2026-08-16 14:45:06,022 [INFO] [Oracle] 0 job(s) matched all filters.
+2026-08-16 14:45:08,559 [INFO] [NICE] Fetched 290 raw job(s) before filtering.
+2026-08-16 14:45:08,560 [INFO] [NICE] 0 job(s) matched all filters.
+2026-08-16 14:45:09,684 [ERROR] [DoorDash] Failed to fetch (doordash) after 3 attempt(s): 403 Client Error: Forbidden for url: https://careersatdoordash.com/job-search/?keyword=&location=India&spage=1
+2026-08-16 14:45:09,685 [INFO] [DoorDash] Fetched 0 raw job(s) before filtering.
+2026-08-16 14:45:09,685 [WARNING] [DoorDash] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 14:45:09,685 [INFO] [DoorDash] 0 job(s) matched all filters.
+2026-08-16 14:45:25,087 [INFO] [Citi] Fetched 970 raw job(s) before filtering.
+2026-08-16 14:45:28,942 [INFO] [Amazon] Fetched 2614 raw job(s) before filtering.
+2026-08-16 14:45:28,948 [INFO] [Amazon] 0 job(s) matched all filters.
+2026-08-16 14:45:30,631 [INFO] [Nutanix] Fetched 211 raw job(s) before filtering.
+2026-08-16 14:45:31,772 [INFO] [Nutanix] 1 job(s) matched all filters.
+2026-08-16 14:45:32,055 [ERROR] [UBS] UBS search POST failed (500 Server Error: Internal Server Error for url: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs). This site requires an 'RFT' anti-bot header this script cannot compute (see fetch_ubs_brassring docstring) -- likely needs a real browser to solve, not a header tweak.
+2026-08-16 14:45:32,058 [INFO] [UBS] Fetched 0 raw job(s) before filtering.
+2026-08-16 14:45:32,058 [WARNING] [UBS] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 14:45:32,059 [INFO] [UBS] 0 job(s) matched all filters.
+2026-08-16 14:45:36,837 [INFO] [Google] Page 1 returned identical results to the previous page -- &page= pagination isn't supported here, stopping.
+2026-08-16 14:45:36,838 [INFO] [Google] Fetched 20 raw job(s) before filtering.
+2026-08-16 14:45:36,838 [INFO] [Google] 0 job(s) matched all filters.
+2026-08-16 14:45:37,448 [INFO] [SAP] Fetched 591 raw job(s) before filtering.
+2026-08-16 14:45:38,366 [INFO] [SAP] 0 job(s) matched all filters.
+2026-08-16 14:45:41,503 [ERROR] [Microsoft] Failed to fetch (microsoft) after 3 attempt(s): 429 Client Error: TOO MANY REQUESTS for url: https://apply.careers.microsoft.com/api/pcsx/search?domain=microsoft.com&query=&location=India&start=20&sort_by=distance&filter_include_remote=1
+2026-08-16 14:45:41,503 [INFO] [Microsoft] Fetched 0 raw job(s) before filtering.
+2026-08-16 14:45:41,503 [WARNING] [Microsoft] Zero jobs fetched — check this company's fetcher/selectors even though no exception was raised (a silent 0 often means a changed page structure, a blocked/anti-bot response, or missing headers).
+2026-08-16 14:45:41,503 [INFO] [Microsoft] 0 job(s) matched all filters.
+2026-08-16 14:45:48,327 [INFO] [Deloitte] Fetched 150 raw job(s) before filtering.
+2026-08-16 14:45:56,347 [INFO] [BNY] Fetched 1430 raw job(s) before filtering.
+2026-08-16 14:45:56,349 [INFO] [BNY] 0 job(s) matched all filters.
+2026-08-16 14:45:57,099 [INFO] [Deloitte] 3 job(s) matched all filters.
+2026-08-16 14:46:22,268 [INFO] [Deloitte South Asia] Fetched 845 raw job(s) before filtering.
+2026-08-16 14:46:43,420 [INFO] [Citi] 33 job(s) matched all filters.
+2026-08-16 14:46:46,304 [INFO] [JPMorgan Chase] Fetched 7353 raw job(s) before filtering.
+2026-08-16 14:46:47,463 [INFO] [JPMorgan Chase] 1 job(s) matched all filters.
+2026-08-16 14:47:04,254 [INFO] [Deloitte South Asia] 53 job(s) matched all filters.
+2026-08-16 14:47:04,326 [INFO] Skipped 101 job(s) already seen on a previous day.
+2026-08-16 14:47:04,400 [INFO] Done. 1 new matching job(s) this run (of 102 total matched before cross-day dedup), 1 row(s) written to D:\Projects\early-explore-jobs\venv\Scripts\output\2026-08-16\job_search_results.xlsx.

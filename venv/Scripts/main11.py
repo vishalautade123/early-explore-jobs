@@ -2,9 +2,17 @@
 Daily Job Search Automation
 ----------------------------
 Scrapes career pages listed in companies_config.json, keeps jobs posted
-within the last N days that match your role keywords, and writes/updates
-an Excel sheet with the results. Safe to re-run daily — it dedupes by
-job link so you won't get repeat rows.
+within the last N days that match your role keywords, and writes results
+to a dated output folder (output/YYYY-MM-DD/job_search_results.xlsx).
+
+Cross-day dedup: a persistent seen_jobs.json (at the top level, NOT inside
+a dated folder) tracks every job link ever written across ALL past runs,
+not just yesterday's. This matters because several integrated companies
+don't expose a posted-date field at all, so without persistent tracking
+the same job would resurface in every single run indefinitely. Companies
+fetch in parallel (ThreadPoolExecutor) since these are independent,
+I/O-bound network calls -- notably faster wall-clock time than the old
+sequential loop, especially with 15+ companies.
 
 Usage:
     python main.py
@@ -15,6 +23,7 @@ import re
 import time
 import uuid
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse, quote
@@ -29,11 +38,29 @@ from openpyxl.utils import get_column_letter
 # ----------------------------------------------------------------------
 BASE_DIR = Path(__file__).parent
 CONFIG_FILE = BASE_DIR / "companies_config.json"
-OUTPUT_FILE = BASE_DIR / "job_search_results.xlsx"
-LOG_FILE = BASE_DIR / "scraper.log"
 
-DAYS_THRESHOLD = 10
+# Every run's results land in their own dated folder, so history is never
+# overwritten and each day is easy to review independently.
+TODAY_STR = datetime.now().strftime("%Y-%m-%d")
+TODAY_DIR = BASE_DIR / "output" / TODAY_STR
+TODAY_DIR.mkdir(parents=True, exist_ok=True)
+
+OUTPUT_FILE = TODAY_DIR / "job_search_results.xlsx"
+LOG_FILE = TODAY_DIR / "scraper.log"
+
+# Persistent, NOT dated -- this is what makes cross-day dedup work. Grows
+# forever unless pruned; see prune_seen_jobs() if you want a rolling window.
+SEEN_JOBS_FILE = BASE_DIR / "seen_jobs.json"
+
+DAYS_THRESHOLD = 2
 MAX_EXPERIENCE_YEARS = 4
+MAX_WORKERS = 6  # companies fetched concurrently; raise/lower to taste
+
+# Transient-failure retry, mainly for unattended scheduled runs where
+# there's no one around to notice a company came back empty for a day.
+MAX_FETCH_RETRIES = 2
+RETRY_BACKOFF_SECONDS = 8
+TRANSIENT_STATUS_CODES = {500, 502, 503, 504}
 
 # Edit this list to match the roles you're targeting.
 KEYWORDS = [
@@ -599,12 +626,20 @@ def fetch_cohesity(company, careers_url):
     """Cohesity's careers page (AEM-backed) returns ALL open jobs grouped
     by department in a single request -- no pagination needed. Verified
     against real captured traffic. Real ATS is Workday underneath, same
-    pattern as Mastercard: job links go straight to the Workday apply page."""
+    pattern as Mastercard: job links go straight to the Workday apply page.
+
+    Requires a Referer header matching the public careers page -- AEM
+    backends commonly enforce this as a lightweight same-origin check.
+    (Confirmed root cause of a run that silently returned 0 jobs: this
+    header was missing.)"""
     url = "https://www.cohesity.com/bin/cohesity/open-positions/"
-    r = requests.get(url, headers=HEADERS, timeout=20)
+    headers = {**HEADERS, "Referer": "https://www.cohesity.com/careers/open-positions/"}
+    r = requests.get(url, headers=headers, timeout=20)
     r.raise_for_status()
     data = r.json()
     by_dept = data.get("job_data") or {}
+    if not by_dept:
+        log.warning(f"[{company}] Response had no 'job_data' — first 200 chars: {r.text[:200]!r}")
 
     jobs = []
     for dept, dept_jobs in by_dept.items():
@@ -622,15 +657,32 @@ def fetch_cohesity(company, careers_url):
 
 
 def fetch_radancy(company, careers_url):
-    """Radancy / TalentBrew career sites (e.g. Citi, Barclays). Verified
-    against real captured traffic for both. Returns an HTML fragment inside
-    a JSON wrapper -- parsed with BeautifulSoup. No posted-date field is
-    available from this endpoint on either verified tenant, so posted_date
-    is left None (included, flagged "Unknown" downstream) rather than
-    guessed."""
+    """Radancy / TalentBrew career sites (e.g. Citi, Barclays). Same
+    backend platform, but tenants customize the frontend template
+    differently -- verified against real captured traffic for both, and
+    they use genuinely different HTML structures:
+      - Citi:     <li class="sr-job-item"><a class="sr-job-item__link">...
+                  no posted-date field on this tenant.
+      - Barclays: <div class="list-item"><a class="job-title--link">...
+                  DOES show a posted date, but year-less ("09 Aug") --
+                  assumed to be the current year, rolled back one year if
+                  that would put it in the future.
+    Tries both selector sets per page; uses whichever matches."""
     base = f"{urlparse(careers_url).scheme}://{urlparse(careers_url).netloc}"
     results_url = f"{base}/search-jobs/results"
     headers = {**HEADERS, "X-Requested-With": "XMLHttpRequest", "Referer": careers_url}
+
+    def parse_barclays_date(text):
+        text = text.strip()
+        if not text:
+            return None
+        try:
+            dt = datetime.strptime(f"{text} {datetime.now().year}", "%d %b %Y")
+            if dt > datetime.now() + timedelta(days=3):
+                dt = dt.replace(year=dt.year - 1)
+            return dt
+        except Exception:
+            return None
 
     jobs_by_id = {}
     for kw in PAGINATION_KEYWORDS:
@@ -657,24 +709,44 @@ def fetch_radancy(company, careers_url):
                 log.warning(f"[{company}] Radancy search returned non-JSON, stopping pagination.")
                 break
             soup = BeautifulSoup(data.get("results", ""), "html.parser")
-            items = soup.select("li.sr-job-item")
-            if not items:
-                break
-            for item in items:
+
+            found_any = False
+            # Template A: Citi-style
+            for item in soup.select("li.sr-job-item"):
                 link_tag = item.select_one("a.sr-job-item__link")
                 if not link_tag:
                     continue
+                found_any = True
                 job_id = link_tag.get("data-job-id", "")
                 loc_tag = item.select_one(".sr-job-location")
                 jobs_by_id[job_id or link_tag.get("href", "")] = {
                     "title": link_tag.get_text(strip=True),
                     "link": base + link_tag.get("href", ""),
-                    "posted_date": None,  # not exposed by this endpoint
+                    "posted_date": None,  # not exposed on this template
                     "source": company,
                     "location": loc_tag.get_text(strip=True) if loc_tag else "",
                     "description": "",
-                    "_id": job_id,
                 }
+            # Template B: Barclays-style
+            for item in soup.select("div.list-item"):
+                link_tag = item.select_one("a.job-title--link")
+                if not link_tag:
+                    continue
+                found_any = True
+                job_id = link_tag.get("data-job-id", "")
+                loc_tag = item.select_one(".job-location")
+                date_tag = item.select_one(".job-date span")
+                jobs_by_id[job_id or link_tag.get("href", "")] = {
+                    "title": link_tag.get_text(strip=True),
+                    "link": base + link_tag.get("href", ""),
+                    "posted_date": parse_barclays_date(date_tag.get_text()) if date_tag else None,
+                    "source": company,
+                    "location": loc_tag.get_text(strip=True) if loc_tag else "",
+                    "description": "",
+                }
+
+            if not found_any:
+                break
             page += 1
             if page > 20:  # safety cap
                 break
@@ -724,18 +796,34 @@ def fetch_sap(company, careers_url):
 
 
 def fetch_doordash(company, careers_url):
-    """DoorDash's careers site (custom WordPress theme). Plain
-    server-rendered HTML, and location filtering works server-side via a
-    ?location= query param, so this pulls India-filtered results directly
-    rather than guessing keywords -- verified against real captured
-    traffic. No posted-date on listing cards."""
+    """DoorDash's careers site (custom WordPress theme, Cloudflare-
+    protected). Plain server-rendered HTML, and location filtering works
+    server-side via a ?location= query param -- verified against real
+    captured traffic. No posted-date on listing cards.
+
+    CAVEAT: this site sits behind Cloudflare. A prior run got a 403. The
+    extra browser-matching headers below may help with header-based bot
+    rules, but Cloudflare can also fingerprint at the TLS-handshake level,
+    which the `requests` library cannot replicate -- if 403s persist after
+    this change, that's very likely why, and would need a real browser
+    (e.g. Playwright) to reliably get past, not just better headers."""
     parsed = urlparse(careers_url)
     base = f"{parsed.scheme}://{parsed.netloc}"
+    doordash_headers = {
+        **HEADERS,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1",
+    }
     jobs_by_link = {}
     page = 1
     while True:
         url = f"{base}/job-search/?keyword=&location=India&spage={page}"
-        r = requests.get(url, headers=HEADERS, timeout=20)
+        r = requests.get(url, headers=doordash_headers, timeout=20)
         r.raise_for_status()
         soup = BeautifulSoup(r.text, "html.parser")
         items = soup.select("div.job-item")
@@ -810,7 +898,16 @@ def fetch_ubs_brassring(company, careers_url):
     A single unfiltered request already returns all India openings (19 at
     capture time, JobsCount matched exactly), so no pagination needed.
     Real fields (verified): jobtitle, formtext23 (location), lastupdated
-    (DD-Mon-YYYY), jobdescription, all nested inside a Questions array."""
+    (DD-Mon-YYYY), jobdescription, all nested inside a Questions array.
+
+    KNOWN BLOCKER (unresolved): the live request also failed with a 500,
+    separate from the EncryptedSessionValue token. The real POST requires
+    an additional 'RFT' header whose value does NOT match any static token
+    findable in the page HTML (confirmed by direct comparison against a
+    real capture) -- it looks like a client-side-computed anti-bot
+    fingerprint, not something a plain HTTP request can derive. This would
+    likely need a real browser (e.g. Playwright) to solve properly rather
+    than further guessing at a formula."""
     parsed = urlparse(careers_url)
     base = f"{parsed.scheme}://{parsed.netloc}"
     qs = dict(x.split("=") for x in parsed.query.split("&") if "=" in x)
@@ -838,10 +935,17 @@ def fetch_ubs_brassring(company, careers_url):
     headers = {
         **HEADERS, "Content-Type": "application/json; charset=UTF-8",
         "X-Requested-With": "XMLHttpRequest", "Referer": careers_url,
+        "Origin": base,
     }
-    r2 = requests.post(f"{base}/TgNewUI/Search/Ajax/MatchedJobs", headers=headers,
-                        data=json.dumps(body), timeout=20)
-    r2.raise_for_status()
+    try:
+        r2 = requests.post(f"{base}/TgNewUI/Search/Ajax/MatchedJobs", headers=headers,
+                            data=json.dumps(body), timeout=20)
+        r2.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        log.error(f"[{company}] UBS search POST failed ({e}). This site requires an 'RFT' "
+                  f"anti-bot header this script cannot compute (see fetch_ubs_brassring "
+                  f"docstring) -- likely needs a real browser to solve, not a header tweak.")
+        return []
     job_list = ((r2.json().get("Jobs") or {}).get("Job")) or []
 
     jobs = []
@@ -904,6 +1008,169 @@ def fetch_nutanix(company, careers_url):
     return list(jobs_by_id.values())
 
 
+def _extract_google_ds_block(html: str, key: str):
+    """Google career pages embed search results via AF_initDataCallback
+    blocks like `{key: 'ds:1', hash: '2', data: [...]}`. This finds the
+    named block and balanced-bracket parses its `data` array."""
+    idx = html.find(f"key: '{key}'")
+    if idx == -1:
+        return None
+    data_start = html.find("data:", idx) + len("data:")
+    start = html.find("[", data_start)
+    if start == -1:
+        return None
+    depth, in_str, esc, i = 0, False, False, start
+    while i < len(html):
+        c = html[i]
+        if in_str:
+            if esc:
+                esc = False
+            elif c == "\\":
+                esc = True
+            elif c == '"':
+                in_str = False
+        else:
+            if c == '"':
+                in_str = True
+            elif c == "[":
+                depth += 1
+            elif c == "]":
+                depth -= 1
+                if depth == 0:
+                    break
+        i += 1
+    try:
+        return json.loads(html[start:i + 1])
+    except Exception:
+        return None
+
+
+def fetch_google(company, careers_url):
+    """Google Careers. Job data is embedded server-side in the page via an
+    internal `AF_initDataCallback` / 'ds:1' block (positional array, not
+    named fields -- verified against real captured traffic by inspecting
+    each index). Real total-count field confirmed (305 at capture time),
+    so this paginates via &page=N -- NOT confirmed to work beyond page 1
+    since only page 1 was captured; if a page comes back with the same
+    jobs as the previous one, that means this parameter guess is wrong
+    and you're only getting page 1 repeated.
+
+    Field mapping (by position, verified against real data):
+      1=title, 2=apply link, 3/4/10/19=[None, description HTML] pairs,
+      9=locations list of [display_name, address_lines, city, zip, state,
+      country], 12/13/14=[epoch_seconds, nanos] timestamps (uses the max
+      of these as posted_date -- exact semantic of each isn't documented,
+      but the latest one is the safest "freshness" signal)."""
+    jobs_by_id = {}
+    seen_ids_per_page = None
+    page = 0
+    while True:
+        sep = "&" if "?" in careers_url else "?"
+        url = careers_url if page == 0 else f"{careers_url}{sep}page={page}"
+        r = requests.get(url, headers=HEADERS, timeout=20)
+        r.raise_for_status()
+        data = _extract_google_ds_block(r.text, "ds:1")
+        if not data or not data[0]:
+            break
+        jobs_raw = data[0]
+        ids_this_page = {j[0] for j in jobs_raw}
+        if seen_ids_per_page is not None and ids_this_page == seen_ids_per_page:
+            log.info(f"[{company}] Page {page} returned identical results to the previous "
+                     f"page -- &page= pagination isn't supported here, stopping.")
+            break
+        seen_ids_per_page = ids_this_page
+
+        for j in jobs_raw:
+            locs = j[9] or []
+            location = "; ".join(l[0] for l in locs if l and l[0])
+            timestamps = [t[0] for t in (j[12], j[13], j[14]) if t]
+            posted = datetime.fromtimestamp(max(timestamps)) if timestamps else None
+            desc_parts = []
+            for idx in (3, 4, 10, 19):
+                field = j[idx] if idx < len(j) else None
+                if field and len(field) > 1 and field[1]:
+                    desc_parts.append(field[1])
+            jobs_by_id[j[0]] = {
+                "title": j[1],
+                "link": j[2],
+                "posted_date": posted,
+                "source": company,
+                "location": location,
+                "description": strip_html(" ".join(desc_parts)),
+            }
+
+        total = data[2] if len(data) > 2 else None
+        page_size = data[3] if len(data) > 3 else len(jobs_raw)
+        page += 1
+        if total and len(jobs_by_id) >= total:
+            break
+        if page > 30:  # safety cap
+            break
+        time.sleep(0.3)
+    return list(jobs_by_id.values())
+
+
+def fetch_microsoft(company, careers_url):
+    """Microsoft Careers. Clean dedicated JSON search API -- verified
+    against real captured traffic. Full description requires a per-job
+    detail call (position_details), so this only fetches that for jobs
+    that already survive the cheap filters (title/date/location), same
+    pattern as Oracle Cloud's description fetching."""
+    base = "https://apply.careers.microsoft.com"
+    jobs = []
+    start = 0
+    page_size = 10  # confirmed value from real captured traffic
+    total = None
+    while True:
+        url = (f"{base}/api/pcsx/search?domain=microsoft.com&query=&location=India"
+               f"&start={start}&sort_by=distance&filter_include_remote=1")
+        r = requests.get(url, headers={**HEADERS, "Accept": "application/json, text/plain, */*"},
+                          timeout=20)
+        r.raise_for_status()
+        data = r.json().get("data") or {}
+        positions = data.get("positions") or []
+        if not positions:
+            break
+        if total is None:
+            total = data.get("count") or 0
+        for p in positions:
+            posted = None
+            ts = p.get("postedTs") or p.get("creationTs")
+            if ts:
+                try:
+                    posted = datetime.fromtimestamp(ts)
+                except Exception:
+                    posted = None
+            jobs.append({
+                "title": p.get("name", ""),
+                "link": base + p.get("positionUrl", ""),
+                "posted_date": posted,
+                "source": company,
+                "location": "; ".join(p.get("locations") or []),
+                "description": "",  # fetched on demand below for filtered survivors
+                "_ms_position_id": p.get("id"),
+            })
+        start += len(positions)
+        if total and start >= total:
+            break
+        time.sleep(0.3)
+    return jobs
+
+
+def get_microsoft_job_description(position_id) -> str:
+    """On-demand full description fetch for one Microsoft job. Only call
+    this for jobs that already passed the cheap filters."""
+    url = (f"https://apply.careers.microsoft.com/api/pcsx/position_details"
+           f"?position_id={position_id}&domain=microsoft.com&hl=en")
+    try:
+        r = requests.get(url, headers={**HEADERS, "Accept": "application/json, text/plain, */*"},
+                          timeout=20)
+        r.raise_for_status()
+        return strip_html((r.json().get("data") or {}).get("jobDescription", ""))
+    except Exception:
+        return ""
+
+
 def fetch_generic(company, url):
     """
     Fallback for custom career sites (and Workday, which needs JS rendering).
@@ -936,6 +1203,8 @@ URL_BASED_FETCHERS = {
     "doordash": fetch_doordash,
     "deloitte": fetch_deloitte,
     "ubs_brassring": fetch_ubs_brassring,
+    "google": fetch_google,
+    "microsoft": fetch_microsoft,
 }
 
 
@@ -944,7 +1213,7 @@ def fetch_jobs_for_company(company_entry):
     url = company_entry["url"]
     ats = company_entry.get("ats") or detect_ats(url)
 
-    try:
+    def _do_fetch():
         if ats in URL_BASED_FETCHERS:
             if ats == "oraclecloud":
                 return URL_BASED_FETCHERS[ats](name, url, company_entry.get("api_domain"))
@@ -954,9 +1223,38 @@ def fetch_jobs_for_company(company_entry):
             return ATS_FETCHERS[ats](name, slug)
         else:
             return fetch_generic(name, url)
-    except Exception as e:
-        log.error(f"[{name}] Failed to fetch ({ats}): {e}")
-        return []
+
+    # Retry only what looks transient (server hiccups, network blips) --
+    # not permanent failures like a 403 block or an application-level bug,
+    # where retrying just burns time for the same guaranteed outcome.
+    last_exception = None
+    for attempt in range(MAX_FETCH_RETRIES + 1):
+        try:
+            return _do_fetch()
+        except requests.exceptions.HTTPError as e:
+            status = e.response.status_code if e.response is not None else None
+            last_exception = e
+            if status in TRANSIENT_STATUS_CODES and attempt < MAX_FETCH_RETRIES:
+                log.warning(f"[{name}] Got HTTP {status} (likely transient), retrying "
+                            f"({attempt + 1}/{MAX_FETCH_RETRIES}) in {RETRY_BACKOFF_SECONDS}s...")
+                time.sleep(RETRY_BACKOFF_SECONDS)
+                continue
+            break
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            last_exception = e
+            if attempt < MAX_FETCH_RETRIES:
+                log.warning(f"[{name}] {e.__class__.__name__}, retrying "
+                            f"({attempt + 1}/{MAX_FETCH_RETRIES}) in {RETRY_BACKOFF_SECONDS}s...")
+                time.sleep(RETRY_BACKOFF_SECONDS)
+                continue
+            break
+        except Exception as e:
+            last_exception = e
+            break  # not a transient-looking error type — don't retry
+
+    log.error(f"[{name}] Failed to fetch ({ats}) after "
+              f"{MAX_FETCH_RETRIES + 1} attempt(s): {last_exception}")
+    return []
 
 
 # ----------------------------------------------------------------------
@@ -1018,6 +1316,22 @@ def matches_experience(min_years) -> bool:
 # ----------------------------------------------------------------------
 # EXCEL OUTPUT (dedupe by link, append new rows)
 # ----------------------------------------------------------------------
+def load_seen_jobs() -> set:
+    """All job links ever written on any previous day. Empty set on first
+    ever run (file won't exist yet)."""
+    if not SEEN_JOBS_FILE.exists():
+        return set()
+    try:
+        return set(json.loads(SEEN_JOBS_FILE.read_text()))
+    except Exception:
+        log.warning(f"Couldn't parse {SEEN_JOBS_FILE.name}, starting with empty history.")
+        return set()
+
+
+def save_seen_jobs(seen: set):
+    SEEN_JOBS_FILE.write_text(json.dumps(sorted(seen)))
+
+
 COLUMNS = ["Date Found", "Company", "Job Title", "Location", "Experience", "Posted Date", "Link"]
 
 
@@ -1070,6 +1384,53 @@ def write_results(new_jobs):
 # ----------------------------------------------------------------------
 # MAIN
 # ----------------------------------------------------------------------
+def process_company(company: dict) -> tuple:
+    """Fetch + filter one company. Returns (name, raw_count, matched_jobs).
+    Runs inside a worker thread -- must not touch shared mutable state
+    other than through return values (it doesn't)."""
+    name = company["name"]
+    jobs = fetch_jobs_for_company(company)
+    log.info(f"[{name}] Fetched {len(jobs)} raw job(s) before filtering.")
+    if not jobs:
+        log.warning(f"[{name}] Zero jobs fetched — check this company's fetcher/selectors "
+                    f"even though no exception was raised (a silent 0 often means a changed "
+                    f"page structure, a blocked/anti-bot response, or missing headers).")
+
+    matched = []
+    for job in jobs:
+        # Cheap filters first — title keywords, posting date, location —
+        # before touching anything that needs an extra network call.
+        if not matches_keywords(job["title"]):
+            continue
+        if not within_date_range(job["posted_date"]):
+            continue
+        if not is_india_location(job.get("location", "")):
+            continue
+
+        # Experience is free text, so only fetch/parse it for jobs that
+        # already survived the filters above.
+        description = job.get("description") or ""
+        if not description:
+            if job.get("_oracle_job_id"):
+                description = get_oracle_job_details(
+                    job["_oracle_domain"], job["_oracle_site_number"], job["_oracle_job_id"]
+                )
+            elif job.get("_ms_position_id"):
+                description = get_microsoft_job_description(job["_ms_position_id"])
+            else:
+                description = fetch_description_fallback(job)
+
+        min_years = extract_min_experience_years(description)
+        if not matches_experience(min_years):
+            continue
+
+        job["experience_note"] = f"{min_years}+ yrs" if min_years is not None else "Unknown - verify"
+        matched.append(job)
+
+    log.info(f"[{name}] {len(matched)} job(s) matched all filters.")
+    return name, len(jobs), matched
+
+
 def main():
     if not CONFIG_FILE.exists():
         log.error(f"Config file not found: {CONFIG_FILE}. Copy companies_config.example.json "
@@ -1078,52 +1439,38 @@ def main():
 
     companies = json.loads(CONFIG_FILE.read_text())
     log.info(f"Loaded {len(companies)} companies from config.")
+    log.info(f"Today's output folder: {TODAY_DIR}")
 
+    # Companies are independent, I/O-bound (network) work, so fetch them
+    # concurrently rather than one at a time. Log lines from different
+    # companies will interleave in the log -- that's expected.
     matched_jobs = []
-    for company in companies:
-        name = company["name"]
-        jobs = fetch_jobs_for_company(company)
-        log.info(f"[{name}] Fetched {len(jobs)} raw job(s) before filtering.")
-        if not jobs:
-            log.warning(f"[{name}] Zero jobs fetched — check this company's fetcher/selectors "
-                        f"even though no exception was raised (a silent 0 often means a changed "
-                        f"page structure, a blocked/anti-bot response, or missing headers).")
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {executor.submit(process_company, c): c["name"] for c in companies}
+        for future in as_completed(futures):
+            name = futures[future]
+            try:
+                _, _, matched = future.result()
+                matched_jobs.extend(matched)
+            except Exception as e:
+                log.error(f"[{name}] Unhandled error during fetch/filter: {e}")
 
-        company_matches = 0
-        for job in jobs:
-            # Cheap filters first — title keywords, posting date, location —
-            # before touching anything that needs an extra network call.
-            if not matches_keywords(job["title"]):
-                continue
-            if not within_date_range(job["posted_date"]):
-                continue
-            if not is_india_location(job.get("location", "")):
-                continue
+    # Cross-day dedup: drop anything already written on a previous day
+    # before it ever reaches today's file.
+    seen = load_seen_jobs()
+    before = len(matched_jobs)
+    new_jobs = [j for j in matched_jobs if j["link"] and j["link"] not in seen]
+    skipped_repeats = before - len(new_jobs)
+    if skipped_repeats:
+        log.info(f"Skipped {skipped_repeats} job(s) already seen on a previous day.")
 
-            # Experience is free text, so only fetch/parse it for jobs that
-            # already survived the filters above.
-            description = job.get("description") or ""
-            if not description:
-                if job.get("_oracle_job_id"):
-                    description = get_oracle_job_details(
-                        job["_oracle_domain"], job["_oracle_site_number"], job["_oracle_job_id"]
-                    )
-                else:
-                    description = fetch_description_fallback(job)
+    added = write_results(new_jobs)
 
-            min_years = extract_min_experience_years(description)
-            if not matches_experience(min_years):
-                continue
+    seen.update(j["link"] for j in new_jobs)
+    save_seen_jobs(seen)
 
-            job["experience_note"] = f"{min_years}+ yrs" if min_years is not None else "Unknown - verify"
-            matched_jobs.append(job)
-            company_matches += 1
-        log.info(f"[{name}] {company_matches} job(s) matched all filters.")
-        time.sleep(1)  # be polite between requests
-
-    added = write_results(matched_jobs)
-    log.info(f"Done. {len(matched_jobs)} matching jobs found this run, "
-             f"{added} new rows added to {OUTPUT_FILE.name}.")
+    log.info(f"Done. {len(new_jobs)} new matching job(s) this run (of {before} total matched "
+             f"before cross-day dedup), {added} row(s) written to {OUTPUT_FILE}.")
 
 
 if __name__ == "__main__":
